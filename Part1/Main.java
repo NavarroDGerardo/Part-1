@@ -11,7 +11,7 @@
 		HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
 		
 		//this is the location of the file name test1.txt
-		File file = new File("C:/Users/Navarro D. Gerardo/Desktop/Part 1/test1.txt");
+		File file = new File("test1.txt");
 		Scanner scan = new Scanner(file); //the scanner will read the file;
 
 		if(scan.hasNextLine()){//if the file is empty the following code will not run
