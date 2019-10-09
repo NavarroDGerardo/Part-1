@@ -2,12 +2,13 @@
  import java.util.*;
 
  public class Main{
+ 	static String initState="";
  	static HashSet<String> endStates = new HashSet<String>();
  	static HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
 	public static void main(String[] args) throws IOException{
 		//this are the variables of initial state
-		String initState = "";
+		//String initState = "";
 		//set of variables of final states;
 		//HashSet<String> endStates = new HashSet<String>(); ALAN ACUERDATE DE PREGUNTAR ESTO
 		//variable for the transitions in the lambda - NDFA
@@ -15,7 +16,7 @@
 		//ALAN ACUERDATE DE PREGUNTAR ESTO!!!
 
 		//this is the location of the file name test1.txt
-		File file = new File("test2.txt");
+		File file = new File("test1.txt");
 		Scanner scan = new Scanner(file); //the scanner will read the file;
 		Scanner in=new Scanner(System.in);
 
@@ -74,7 +75,9 @@
 		int len=0;
 		ArrayList<String> myArrayList=new ArrayList<String>();
 		ArrayList<String> aux=new ArrayList<String>();
-		myArrayList.add("q0");
+		myArrayList.add(initState);
+
+		
 
 
 		while(test.length()>len){
@@ -95,7 +98,54 @@
 						}
 					}
 				}
-				else{
+				//Empiezo a checar lambdas
+				if(transition.get(myArrayList.get(i)).containsKey("lmd")){	
+					ArrayList<String>visited=new ArrayList<String>();//estados ya visitados que tienen lambda
+					ArrayList<String>lambdas=new ArrayList<String>();//estados origen para procesar lambda
+					visited.add(myArrayList.get(i));
+					lambdas.add(myArrayList.get(i)); //aqui guardo los estados que pueden procesar lambda
+					ArrayList<String>auxLmd=new ArrayList<String>();//guarda los destinos de lambda
+					ArrayList<String>auxAux; //acualiza lambdas, es decir los estados que pueden procesar lambda
+					//auxLmd.add(myArrayList.get(i));
+					
+
+					while(lambdas.size()>0){
+
+						auxAux=new ArrayList<String>();
+
+						for(int k=0; k<lambdas.size(); k++){
+
+							for(int l=0; l<transition.get(lambdas.get(k)).get("lmd").size();l++){
+								if(!auxLmd.contains(transition.get(lambdas.get(k)).get("lmd").get(l))){
+									auxLmd.add(transition.get(lambdas.get(k)).get("lmd").get(l)); //los destinos de lambda
+								}
+							}
+
+						}
+
+						for(int k=0; k<auxLmd.size(); k++){
+
+							if(transition.get(auxLmd.get(k)).containsKey(Character.toString(test.charAt(len)))){
+								for(int m=0; m<transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).size(); m++){
+									if(!aux.contains(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m))){
+										aux.add(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m));
+									}
+								}
+							}
+							if(transition.get(auxLmd.get(k)).containsKey("lmd")){
+								if(!visited.contains(auxLmd.get(i))){
+									auxAux.add(auxLmd.get(i));
+									visited.add(auxLmd.get(i));
+								}
+								
+							}
+						}
+
+						lambdas=auxAux;
+					}
+				}
+
+				if(aux.size()==0){
 					return false;
 				}
 			}
