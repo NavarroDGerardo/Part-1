@@ -2,17 +2,22 @@
  import java.util.*;
 
  public class Main{
+ 	static HashSet<String> endStates = new HashSet<String>();
+ 	static HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
+
 	public static void main(String[] args) throws IOException{
 		//this are the variables of initial state
 		String initState = "";
 		//set of variables of final states;
-		HashSet<String> endStates = new HashSet<String>();
+		//HashSet<String> endStates = new HashSet<String>(); ALAN ACUERDATE DE PREGUNTAR ESTO
 		//variable for the transitions in the lambda - NDFA
-		HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
-		
+		//HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
+		//ALAN ACUERDATE DE PREGUNTAR ESTO!!!
+
 		//this is the location of the file name test1.txt
-		File file = new File("test1.txt");
+		File file = new File("test2.txt");
 		Scanner scan = new Scanner(file); //the scanner will read the file;
+		Scanner in=new Scanner(System.in);
 
 		if(scan.hasNextLine()){//if the file is empty the following code will not run
 			System.out.println("set of states: " + scan.nextLine());// this will print the set of states int the console
@@ -31,10 +36,13 @@
 				String[] process = line.split("=>");//the structure of the transiitons is q0,lmd=>q0 so we split the String in an array of Strings
 				//the array will contain two Strings. The first one will be "q0,lmd" and the second one will tell us where we arrive processing the char
 				
-				String init = process[0].substring(0, 3);//we will get the initial state of where we
+				String init = process[0].substring(0, 2);//we will get the initial state of where we
 				String pro = process[0].substring(3, process[0].length());//this will get the character that we will process from the initial state
-				String fin = process[1];//this will get the destination state by processing the character form the line above
-
+				//this will get the destination state by processing the character form the line above
+				//String fin=process[1];
+				String[] destination=process[1].split(",");
+				
+			
 				//if the transition HashMap<> doesn't contain the init state of the proceess we need to create a new Map with the name of the state
 				//and a new ArrayList for the characters that the state can process
 				if(!transition.containsKey(init)) transition.put(init, new HashMap<String, ArrayList<String>>());
@@ -44,12 +52,79 @@
 				if(!transition.get(init).containsKey(pro)) transition.get(init).put(pro, new ArrayList<>());
 				//after cheking the two conditions above we can finally add the final state to the HashMap of the inistial state and tell from whic state
 				//we can arrive by processing fin.
-				transition.get(init).get(pro).add(fin);
+				if(destination.length>1){
+					for(int i=0; i<destination.length; i++){
+						transition.get(init).get(pro).add(destination[i]);
+					}
+				}
+				else{
+					transition.get(init).get(pro).add(destination[0]);
+				}			
 			}
 
 			System.out.println("initial state: " + initState);//this will print the initial state name
 			System.out.println("Set of final states: " + endStates);//this will print the set of final states
 			System.out.println("transition table: " + transition);//this will print the transition table of the lambda - NDFA
 		}
+		System.out.println("Hello, enter a string you want to know if can be created with the automata");
+		String testCase=in.next();
+		System.out.println(checkString(testCase));
+	}
+	public static boolean checkString(String test){
+		int len=0;
+		ArrayList<String> myArrayList=new ArrayList<String>();
+		ArrayList<String> aux=new ArrayList<String>();
+		myArrayList.add("q0");
+
+
+		while(test.length()>len){
+			aux=new ArrayList<String>();
+			//System.out.println(myArrayList);
+			//System.out.println("Contenido en arraylist " +myArrayList.get(0));
+
+			for(int i=0; i<myArrayList.size(); i++){
+				//System.out.println("len " +len);
+				//System.out.println("i: "+i);
+				
+				//System.out.println(transition.get(myArrayList.get(i)));
+
+				if(transition.get(myArrayList.get(i)).containsKey(Character.toString(test.charAt(len)))){
+					for(int j=0; j<transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).size(); j++){
+						if(!aux.contains(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j))){
+							aux.add(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j));
+						}
+					}
+				}
+				else{
+					return false;
+				}
+			}
+			myArrayList=aux;
+			len++;
+		}
+		for(int i=0; i<myArrayList.size(); i++){
+			if(endStates.contains(myArrayList.get(i))){
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
