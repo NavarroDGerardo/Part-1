@@ -7,6 +7,7 @@
  	static HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
 	public static void main(String[] args) throws IOException{
+		Scanner in=new Scanner(System.in);
 		//this are the variables of initial state
 		//String initState = "";
 		//set of variables of final states;
@@ -16,9 +17,11 @@
 		//ALAN ACUERDATE DE PREGUNTAR ESTO!!!
 
 		//this is the location of the file name test1.txt
-		File file = new File("test1.txt");
+		System.out.println("Hello, insert the name of your test file in the format: NAME.txt");
+		String nameFile=in.next();
+		File file = new File(nameFile);
 		Scanner scan = new Scanner(file); //the scanner will read the file;
-		Scanner in=new Scanner(System.in);
+		
 
 		if(scan.hasNextLine()){//if the file is empty the following code will not run
 			System.out.println("set of states: " + scan.nextLine());// this will print the set of states int the console
@@ -69,6 +72,7 @@
 		}
 		System.out.println("Hello, enter a string you want to know if can be created with the automata");
 		String testCase=in.next();
+
 		System.out.println(checkString(testCase));
 	}
 	public static boolean checkString(String test){
@@ -77,81 +81,103 @@
 		ArrayList<String> aux=new ArrayList<String>();
 		myArrayList.add(initState);
 
-		
-
+		if(test.equals("lmd")){
+			if(endStates.contains(initState)){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
 
 		while(test.length()>len){
 			aux=new ArrayList<String>();
 			//System.out.println(myArrayList);
 			//System.out.println("Contenido en arraylist " +myArrayList.get(0));
-
+			System.out.println("cuales voy a iterar "+myArrayList);
 			for(int i=0; i<myArrayList.size(); i++){
 				//System.out.println("len " +len);
 				//System.out.println("i: "+i);
-				
 				//System.out.println(transition.get(myArrayList.get(i)));
-
-				if(transition.get(myArrayList.get(i)).containsKey(Character.toString(test.charAt(len)))){
-					for(int j=0; j<transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).size(); j++){
-						if(!aux.contains(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j))){
-							aux.add(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j));
+				System.out.println("print prueba array i position "+myArrayList.get(i));
+				System.out.println("print char debajo de prueba array "+test.charAt(len));
+				System.out.println("a ver que "+transition.get(i));
+				if(transition.containsKey(myArrayList.get(i))){
+					if(transition.get(myArrayList.get(i)).containsKey(Character.toString(test.charAt(len)))){
+						for(int j=0; j<transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).size(); j++){
+							if(!aux.contains(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j))){
+								aux.add(transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).get(j));
+							}
 						}
 					}
-				}
-				//Empiezo a checar lambdas
-				if(transition.get(myArrayList.get(i)).containsKey("lmd")){	
-					ArrayList<String>visited=new ArrayList<String>();//estados ya visitados que tienen lambda
-					ArrayList<String>lambdas=new ArrayList<String>();//estados origen para procesar lambda
-					visited.add(myArrayList.get(i));
-					lambdas.add(myArrayList.get(i)); //aqui guardo los estados que pueden procesar lambda
-					ArrayList<String>auxLmd=new ArrayList<String>();//guarda los destinos de lambda
-					ArrayList<String>auxAux; //acualiza lambdas, es decir los estados que pueden procesar lambda
-					//auxLmd.add(myArrayList.get(i));
-					
+					//Empiezo a checar lambdas
+					if(transition.get(myArrayList.get(i)).containsKey("lmd")){	
+						ArrayList<String>visited=new ArrayList<String>();//estados ya visitados que tienen lambda (para que no se cicle)
+						ArrayList<String>lambdas=new ArrayList<String>();//estados origen para procesar lambda
+						visited.add(myArrayList.get(i));
+						lambdas.add(myArrayList.get(i)); //aqui guardo los estados que pueden procesar lambda
+						ArrayList<String>auxLmd=new ArrayList<String>();//guarda los destinos de lambda
+						ArrayList<String>auxAux; //acualiza lambdas, es decir los estados que pueden procesar lambda
+						//auxLmd.add(myArrayList.get(i));
+						
+						//si ya no hay (o simplemente no hubo ninguno) mas estados nuevos que procesen lambda rompe el while
+						while(lambdas.size()>0){
+							System.out.println("Estados de lambdas a procesar "+lambdas);
 
-					while(lambdas.size()>0){
-
-						auxAux=new ArrayList<String>();
-
-						for(int k=0; k<lambdas.size(); k++){
-
-							for(int l=0; l<transition.get(lambdas.get(k)).get("lmd").size();l++){
-								if(!auxLmd.contains(transition.get(lambdas.get(k)).get("lmd").get(l))){
-									auxLmd.add(transition.get(lambdas.get(k)).get("lmd").get(l)); //los destinos de lambda
-								}
-							}
-
-						}
-
-						for(int k=0; k<auxLmd.size(); k++){
-
-							if(transition.get(auxLmd.get(k)).containsKey(Character.toString(test.charAt(len)))){
-								for(int m=0; m<transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).size(); m++){
-									if(!aux.contains(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m))){
-										aux.add(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m));
+							auxAux=new ArrayList<String>();
+							//itero sobre los estados origen que pueden procesar lambda
+							for(int k=0; k<lambdas.size(); k++){
+								//aqui guardo en auxLmd los estados destino al procesar lambda de los estados origen
+								for(int l=0; l<transition.get(lambdas.get(k)).get("lmd").size();l++){
+									if(!auxLmd.contains(transition.get(lambdas.get(k)).get("lmd").get(l))){
+										auxLmd.add(transition.get(lambdas.get(k)).get("lmd").get(l)); //los destinos de lambda
 									}
 								}
-							}
-							if(transition.get(auxLmd.get(k)).containsKey("lmd")){
-								if(!visited.contains(auxLmd.get(i))){
-									auxAux.add(auxLmd.get(i));
-									visited.add(auxLmd.get(i));
-								}
-								
-							}
-						}
 
-						lambdas=auxAux;
+							}
+							System.out.println("estados que llego procesando la lambda "+auxLmd);
+
+							//empiezo a checar si los Estadoos destino pueden procesar la letra que se busca de la palabra
+							for(int k=0; k<auxLmd.size(); k++){
+
+								if(transition.get(auxLmd.get(k)).containsKey(Character.toString(test.charAt(len)))){
+									System.out.println("NO ENTREES");
+									for(int m=0; m<transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).size(); m++){
+										if(!aux.contains(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m))){
+											aux.add(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m));
+										}
+										
+									}
+								}
+								//checo si alguno de los estados destino tambien pueden procesar lambda para asi guardarlo en el auxiliar que servira de reset, 
+								//asi como en los visitados para evitar los ciclos
+								System.out.println("valor de la k "+k);
+								if(transition.get(auxLmd.get(k)).containsKey("lmd")){
+									System.out.println("character "+test.charAt(len));
+
+									if(!visited.contains(auxLmd.get(k))){
+										auxAux.add(auxLmd.get(k));
+										visited.add(auxLmd.get(k));
+									}
+									
+								}
+							}
+							
+							//reseteo los estados que ahora son origen y pueden procesar lambda
+							lambdas=auxAux;
+						}
 					}
 				}
 
-				if(aux.size()==0){
+				
+			}
+			if(aux.size()==0){
 					return false;
-				}
 			}
 			myArrayList=aux;
 			len++;
 		}
+		System.out.println(aux);
 		for(int i=0; i<myArrayList.size(); i++){
 			if(endStates.contains(myArrayList.get(i))){
 				return true;
@@ -160,6 +186,8 @@
 
 		return false;
 	}
+
+	
 }
 
 
