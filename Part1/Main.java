@@ -82,26 +82,22 @@
 		myArrayList.add(initState);
 
 		if(test.equals("lmd")){
-			if(endStates.contains(initState)){
-				return true;
-			}
-			else{
-				return false;
-			}
+			// if(endStates.contains(initState)){
+			// 	return true;
+			// }
+			// else{
+			// 	return false;
+			// }
+			return isAccepted(myArrayList);
 		}
 
 		while(test.length()>len){
 			aux=new ArrayList<String>();
 			//System.out.println(myArrayList);
 			//System.out.println("Contenido en arraylist " +myArrayList.get(0));
-			System.out.println("cuales voy a iterar "+myArrayList);
+			
 			for(int i=0; i<myArrayList.size(); i++){
-				//System.out.println("len " +len);
-				//System.out.println("i: "+i);
-				//System.out.println(transition.get(myArrayList.get(i)));
-				System.out.println("print prueba array i position "+myArrayList.get(i));
-				System.out.println("print char debajo de prueba array "+test.charAt(len));
-				System.out.println("a ver que "+transition.get(i));
+				
 				if(transition.containsKey(myArrayList.get(i))){
 					if(transition.get(myArrayList.get(i)).containsKey(Character.toString(test.charAt(len)))){
 						for(int j=0; j<transition.get(myArrayList.get(i)).get(Character.toString(test.charAt(len))).size(); j++){
@@ -122,7 +118,7 @@
 						
 						//si ya no hay (o simplemente no hubo ninguno) mas estados nuevos que procesen lambda rompe el while
 						while(lambdas.size()>0){
-							System.out.println("Estados de lambdas a procesar "+lambdas);
+							
 
 							auxAux=new ArrayList<String>();
 							//itero sobre los estados origen que pueden procesar lambda
@@ -135,13 +131,13 @@
 								}
 
 							}
-							System.out.println("estados que llego procesando la lambda "+auxLmd);
+							
 
 							//empiezo a checar si los Estadoos destino pueden procesar la letra que se busca de la palabra
 							for(int k=0; k<auxLmd.size(); k++){
 
 								if(transition.get(auxLmd.get(k)).containsKey(Character.toString(test.charAt(len)))){
-									System.out.println("NO ENTREES");
+									
 									for(int m=0; m<transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).size(); m++){
 										if(!aux.contains(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m))){
 											aux.add(transition.get(auxLmd.get(k)).get(Character.toString(test.charAt(len))).get(m));
@@ -151,9 +147,9 @@
 								}
 								//checo si alguno de los estados destino tambien pueden procesar lambda para asi guardarlo en el auxiliar que servira de reset, 
 								//asi como en los visitados para evitar los ciclos
-								System.out.println("valor de la k "+k);
+								
 								if(transition.get(auxLmd.get(k)).containsKey("lmd")){
-									System.out.println("character "+test.charAt(len));
+									
 
 									if(!visited.contains(auxLmd.get(k))){
 										auxAux.add(auxLmd.get(k));
@@ -177,17 +173,62 @@
 			myArrayList=aux;
 			len++;
 		}
-		
+		return isAccepted(myArrayList);
 
-		for(int i=0; i<myArrayList.size(); i++){
-			if(transition.get(myArrayList.get(i)).containsKey("lmd")){
-				
+	}
+	
+	public static boolean isAccepted(ArrayList<String> partialFinalStates){
+		ArrayList<String>lastStates=new ArrayList<String>();
+
+		System.out.println("Estados finales parciales "+partialFinalStates);
+		for(int i=0; i<partialFinalStates.size(); i++){
+			if(transition.containsKey(partialFinalStates.get(i))){
+				if(transition.get(partialFinalStates.get(i)).containsKey("lmd")){
+
+					ArrayList<String> finalLambdas=new ArrayList<String>();
+					ArrayList<String> auxFLambdas;
+					ArrayList<String> finalVisited=new ArrayList<String>();
+					finalLambdas.add(partialFinalStates.get(i)); //estados que pueden procesar lambda
+					finalVisited.add(partialFinalStates.get(i)); //estados que ya procesaron lambda
+
+					while(finalLambdas.size()>0){
+								System.out.println("Estados de lambdas a procesar "+finalLambdas);
+
+								auxFLambdas=new ArrayList<String>();
+								//itero sobre los estados origen que pueden procesar lambda
+								for(int k=0; k<finalLambdas.size(); k++){
+									if(transition.get(finalLambdas.get(k)).containsKey("lmd") ){
+									
+										for(int l=0; l<transition.get(finalLambdas.get(k)).get("lmd").size();l++){
+											if(!lastStates.contains(transition.get(finalLambdas.get(k)).get("lmd").get(l))){
+												lastStates.add(transition.get(finalLambdas.get(k)).get("lmd").get(l)); //los destinos de lambda
+											}
+
+											if(!finalVisited.contains(transition.get(finalLambdas.get(k)).get("lmd").get(l))){
+												finalVisited.add(transition.get(finalLambdas.get(k)).get("lmd").get(l));
+												auxFLambdas.add(transition.get(finalLambdas.get(k)).get("lmd").get(l)); //los destinos de lambda
+											}
+											
+										}
+									}
+
+								}
+								finalLambdas=auxFLambdas;
+
+					}
+
+				}
 			}
 		}
 
 
-		for(int i=0; i<myArrayList.size(); i++){
-			if(endStates.contains(myArrayList.get(i))){
+		for(int i=0; i<partialFinalStates.size(); i++){
+			if(endStates.contains(partialFinalStates.get(i))){
+				return true;
+			}
+		}
+		for(int i=0; i<lastStates.size(); i++){
+			if(endStates.contains(lastStates.get(i))){
 				return true;
 			}
 		}
