@@ -177,7 +177,15 @@
 			myArrayList=aux;
 			len++;
 		}
-		System.out.println(aux);
+		
+
+		for(int i=0; i<myArrayList.size(); i++){
+			if(transition.get(myArrayList.get(i)).containsKey("lmd")){
+				
+			}
+		}
+
+
 		for(int i=0; i<myArrayList.size(); i++){
 			if(endStates.contains(myArrayList.get(i))){
 				return true;
@@ -187,7 +195,7 @@
 		return false;
 	}
 
-	
+
 }
 
 
