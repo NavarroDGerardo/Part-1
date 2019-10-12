@@ -59,8 +59,8 @@ public class GUI extends JFrame {
         instr1.setHorizontalAlignment(JLabel.CENTER);
         instr2.setHorizontalAlignment(JLabel.CENTER);
         instr3.setHorizontalAlignment(JLabel.RIGHT);
-        result.setEnabled(false);
-        stringDisplay.setEnabled(false);
+        result.setEditable(false);
+        stringDisplay.setEditable(false);
         stringDisplay.setForeground(Color.black);
 
         //This line of code add the button and action listener to add funcitonality when is click.

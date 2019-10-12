@@ -14,11 +14,11 @@ import java.util.*;
 
 public class Automata{
     //this is the variable of initial state
-    public String initState="";
+    private String initState="";
     //Structure that contains all final states;
-    public HashSet<String> endStates = new HashSet<String>();
+    private HashSet<String> endStates = new HashSet<String>();
     //Structure that contains the transition table, being the string the origin state, and the hash contains as the key the character and as the value the destination states
-    public HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
+    private HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
     public boolean processString(String name, String test) throws IOException{
         setStates(name);
@@ -57,8 +57,9 @@ public class Automata{
                 String[] process = line.split("=>");//the structure of the transiitons is q0,lmd=>q0 so we split the String in an array of Strings
                 //the array will contain two Strings. The first one will be "q0,lmd" and the second one will tell us where we arrive processing the char
                 
-                String init = process[0].substring(0, 2);//we will get the initial state of where we
-                String pro = process[0].substring(3, process[0].length());//this will get the character that we will process from the initial state
+                String[] state_letter = process[0].split(",");
+                String init = state_letter[0];//we will get the initial state of where we
+                String pro = state_letter[1];//this will get the character that we will process from the initial state
                 //this will get the destination state by processing the character form the line above
                 //String fin=process[1];
                 String[] destination=process[1].split(",");
@@ -184,9 +185,8 @@ public class Automata{
         //after checking all the letters in the string, we send the last states we got to the isAccepted mehod in order to verify if one of those states 
         //is a final state in the automata and then returns if it is accepted or not
         return isAccepted(myArrayList); 
-
-
     }
+
     //this method verified if we get a final state or not, also checking if our current "final states" can reach via lambda other states that also have to be
     //considered as the last states we got by proccesing the string. So this methos receives the last states we got
     public boolean isAccepted(ArrayList<String> partialFinalStates){
