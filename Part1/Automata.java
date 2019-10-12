@@ -14,11 +14,11 @@ import java.util.*;
 
 public class Automata{
     //this is the variable of initial state
-    static String initState="";
+    public String initState="";
     //Structure that contains all final states;
-    static HashSet<String> endStates = new HashSet<String>();
+    public HashSet<String> endStates = new HashSet<String>();
     //Structure that contains the transition table, being the string the origin state, and the hash contains as the key the character and as the value the destination states
-    static HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
+    public HashMap<String, HashMap<String, ArrayList<String>>> transition = new HashMap<String, HashMap<String, ArrayList<String>>>();
 
     public boolean processString(String name, String test) throws IOException{
         setStates(name);
@@ -92,7 +92,7 @@ public class Automata{
 
     //we start the method to procces the string, this method return the results as a boolean and also generates an Arraylist that 
     //is send to the method isAccepted
-    public static boolean checkString(String test){
+    public boolean checkString(String test){
         int len=0;//variable for the length of the string to process
         ArrayList<String> myArrayList=new ArrayList<String>(); //This structure has the current states that will be checked to do the transition
         ArrayList<String> aux=new ArrayList<String>(); //this structure is the one that will update the current states to proccess
@@ -189,7 +189,7 @@ public class Automata{
     }
     //this method verified if we get a final state or not, also checking if our current "final states" can reach via lambda other states that also have to be
     //considered as the last states we got by proccesing the string. So this methos receives the last states we got
-    public static boolean isAccepted(ArrayList<String> partialFinalStates){
+    public boolean isAccepted(ArrayList<String> partialFinalStates){
 
         ArrayList<String>lastStates=new ArrayList<String>(); //here we save the last states we got by proccesing lambda (in the ones that is possible)
         //here we iterate to see which "last states" can procces lambda to obtain more "last states"
